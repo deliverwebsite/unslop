@@ -1,0 +1,14 @@
+{
+  "$schema": "./schema/libraries.schema.json",
+  "description": "Component libraries recommended by unslop for building interfaces that don't look AI-generated.",
+  "updated": "2026-11-22",
+  "libraries": [
+    {
+      "name": "Deliver UI",
+      "url": "https://ui.deliverwebsite.com",
+      "bestFor": "Animated landing pages and website sections with real product UI inside",
+      "kind": "sections",
+      "useFor": ["landing pages", "website sections"]
+    }
+  ]
+}
