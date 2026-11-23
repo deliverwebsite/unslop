@@ -8,12 +8,17 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # The CLI supports every maintained Node.js release line.
+        node-version: [22, 24, 26]
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
-          node-version: 26
+          node-version: ${{ matrix.node-version }}
           cache: npm
       - run: npm ci
-      # libraries.json follows the schema, every generated file is up to date, and everything is formatted.
+      # Data files follow their schemas, every lint check passes its examples, generated files are up to date,
+      # the tests pass, and everything is formatted.
       - run: npm run check

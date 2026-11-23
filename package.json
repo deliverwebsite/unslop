@@ -1,7 +1,7 @@
 {
   "name": "@deliverwebsite/unslop",
-  "version": "0.1.0",
-  "description": "Rules and a curated library index that stop AI coding agents from shipping generic, AI-looking interfaces.",
+  "version": "0.2.0",
+  "description": "A design playbook for AI coding agents, plus a linter that catches the tells of AI-generated interfaces.",
   "type": "module",
   "license": "MIT",
   "author": "Deliver Website (https://deliverwebsite.com)",
@@ -10,21 +10,40 @@
     "type": "git",
     "url": "git+https://github.com/deliverwebsite/unslop.git"
   },
+  "bin": {
+    "unslop": "bin/unslop.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "rules",
+    "patterns.json",
+    "libraries.json",
+    "schema",
+    "LICENSE",
+    "LICENSE-CONTENT.md"
+  ],
   "keywords": [
     "ai-slop",
     "design",
     "ui",
     "agents",
-    "animation"
+    "animation",
+    "lint",
+    "claude",
+    "cursor",
+    "copilot",
+    "agents-md"
   ],
   "engines": {
-    "node": ">=26"
+    "node": ">=22"
   },
   "scripts": {
     "build": "node scripts/build.js",
+    "test": "node --test test/*.test.js",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "node scripts/validate.js && node scripts/build.js --check && prettier --check ."
+    "check": "node scripts/validate.js && node scripts/build.js --check && node --test test/*.test.js && prettier --check ."
   },
   "devDependencies": {
     "prettier": "^3.10.1"
