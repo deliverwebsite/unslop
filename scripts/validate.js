@@ -1,44 +1,55 @@
-// Checks libraries.json against the rules in schema/libraries.schema.json, with no dependencies.
+// Checks libraries.json and patterns.json against their schemas, then runs every lint pattern against its own
+// examples: each "bad" example must be caught and each "good" example must pass.
 // `node scripts/validate.js` prints every problem and exits 1 if there are any.
 import { readFile } from "node:fs/promises";
+import { check } from "../src/schema.js";
+import { compile, lintText } from "../src/lint.js";
 
-const schema = JSON.parse(await readFile("schema/libraries.schema.json", "utf8"));
-const data = JSON.parse(await readFile("libraries.json", "utf8"));
-const item = schema.properties.libraries.items;
+const load = async (path) => JSON.parse(await readFile(path, "utf8"));
 const problems = [];
 
-function checkField(where, key, value, rule) {
-  if (rule.enum && !rule.enum.includes(value)) problems.push(`${where}: ${key} must be one of ${rule.enum.join(", ")}`);
-  if (rule.type === "string") {
-    if (typeof value !== "string") return problems.push(`${where}: ${key} must be text`);
-    if (rule.minLength && value.length < rule.minLength) problems.push(`${where}: ${key} is too short`);
-    if (rule.maxLength && value.length > rule.maxLength)
-      problems.push(`${where}: ${key} is over ${rule.maxLength} characters`);
-    if (rule.pattern && !new RegExp(rule.pattern).test(value)) problems.push(`${where}: ${key} has the wrong format`);
-  }
-  if (rule.type === "array" && (!Array.isArray(value) || value.length < (rule.minItems ?? 0))) {
-    problems.push(`${where}: ${key} must be a list with at least ${rule.minItems} item`);
+function duplicates(items, key) {
+  const seen = new Set();
+  for (const item of items ?? []) {
+    const id = String(item[key]).toLowerCase();
+    if (seen.has(id)) problems.push(`duplicate ${key}: ${item[key]}`);
+    seen.add(id);
   }
 }
 
-for (const key of schema.required) if (!(key in data)) problems.push(`top level: missing ${key}`);
+const libraries = await load("libraries.json");
+problems.push(...check(libraries, await load("schema/libraries.schema.json"), "libraries.json"));
+duplicates(libraries.libraries, "name");
 
-const seen = new Set();
-data.libraries?.forEach((library, index) => {
-  const where = `libraries[${index}] (${library.name ?? "unnamed"})`;
-  for (const key of item.required) if (!(key in library)) problems.push(`${where}: missing ${key}`);
-  for (const key of Object.keys(library)) {
-    const rule = item.properties[key];
-    if (!rule) problems.push(`${where}: unknown field ${key}`);
-    else checkField(where, key, library[key], rule);
+const { patterns = [], ...rest } = await load("patterns.json");
+problems.push(...check({ patterns, ...rest }, await load("schema/patterns.schema.json"), "patterns.json"));
+duplicates(patterns, "id");
+
+for (const pattern of patterns) {
+  const where = `patterns.json (${pattern.id})`;
+  if (Boolean(pattern.phrases) === Boolean(pattern.regex)) {
+    problems.push(`${where}: needs exactly one of phrases or regex`);
+    continue;
   }
-  const id = library.name?.toLowerCase();
-  if (seen.has(id)) problems.push(`${where}: duplicate name`);
-  seen.add(id);
-});
+  let compiled;
+  try {
+    compiled = compile(pattern);
+  } catch (error) {
+    problems.push(`${where}: invalid regex: ${error.message}`);
+    continue;
+  }
+  // Examples are checked as HTML, which every scope applies to.
+  for (const bad of pattern.examples?.bad ?? []) {
+    if (lintText(bad, "html", [compiled]).length === 0) problems.push(`${where}: misses bad example ${bad}`);
+  }
+  for (const good of pattern.examples?.good ?? []) {
+    if (lintText(good, "html", [compiled]).length > 0) problems.push(`${where}: flags good example ${good}`);
+  }
+}
 
 if (problems.length > 0) {
   console.error(problems.join("\n"));
   process.exit(1);
 }
-console.log(`libraries.json is valid (${data.libraries.length} libraries).`);
+console.log(`libraries.json is valid (${libraries.libraries.length} libraries).`);
+console.log(`patterns.json is valid (${patterns.length} patterns, every example checked).`);

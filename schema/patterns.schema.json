@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/deliverwebsite/unslop/blob/main/schema/patterns.schema.json",
+  "title": "Unslop lint patterns",
+  "type": "object",
+  "required": ["description", "patterns"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "description": { "type": "string" },
+    "patterns": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "severity", "scope", "message", "fix", "examples"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]+$" },
+          "severity": { "enum": ["error", "warn"] },
+          "scope": { "enum": ["copy", "markup", "style"] },
+          "phrases": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 3 } },
+          "regex": { "type": "string", "minLength": 3 },
+          "flags": { "type": "string", "pattern": "^[gimsuy]+$" },
+          "unless": { "type": "string", "minLength": 3 },
+          "max": { "type": "integer" },
+          "once": { "type": "boolean" },
+          "message": { "type": "string", "minLength": 10 },
+          "fix": { "type": "string", "minLength": 10 },
+          "examples": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["bad", "good"],
+            "properties": {
+              "bad": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+              "good": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+            }
+          }
+        }
+      }
+    }
+  }
+}
