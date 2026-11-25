@@ -1,0 +1,145 @@
+{
+  "$schema": "../schema/patterns.schema.json",
+  "description": "Lint checks for the words on the page: phrases, placeholders, stats and labels that read as generated.",
+  "patterns": [
+    {
+      "id": "banned-phrase",
+      "severity": "error",
+      "scope": "copy",
+      "phrases": [
+        "Unlock the power of",
+        "Supercharge",
+        "Seamless",
+        "Revolutionize",
+        "Revolutionise",
+        "Next-generation",
+        "Next-gen",
+        "Elevate your",
+        "In today's fast-paced world",
+        "Cutting-edge",
+        "Game-changer",
+        "Game-changing",
+        "Unleash",
+        "Empower",
+        "Effortless",
+        "Streamline your",
+        "World-class",
+        "Harness the",
+        "Take your business to the next level",
+        "Transform the way you",
+        "Built for the future",
+        "Like never before",
+        "Thoughtfully crafted",
+        "Thoughtfully designed",
+        "Meticulously crafted",
+        "Quietly powerful"
+      ],
+      "message": "\"{match}\" is a phrase that signals generated copy.",
+      "fix": "Say what the product does and for whom, with a concrete detail (a number, a feature name, a result).",
+      "examples": {
+        "bad": ["<h1>Supercharge your workflow</h1>", "<p>Seamlessly sync your files.</p>"],
+        "good": ["<h1>Invoices that chase themselves</h1>", "<SeamlessScroll />"]
+      }
+    },
+    {
+      "id": "vague-social-proof",
+      "severity": "warn",
+      "scope": "copy",
+      "regex": "\\b(?:trusted by|loved by|join) (?:thousands|millions|leading|teams|developers|the best)\\b",
+      "message": "Vague social proof (\"{match}\") reads as filler.",
+      "fix": "Use a specific, checkable claim: \"2,400 clinics send reminders with Pulsebook\", or a named quote.",
+      "examples": {
+        "bad": ["<p>Trusted by thousands of teams</p>", "Join millions of creators"],
+        "good": ["<p>Used by 2,400 dental clinics in Ontario</p>"]
+      }
+    },
+    {
+      "id": "placeholder-copy",
+      "severity": "error",
+      "scope": "copy",
+      "regex": "\\blorem ipsum\\b|\\bFeature [1-9]\\b|\\b(?:Your|Company|Product) (?:Name|Logo) Here\\b|\\bJohn Doe\\b|\\bAcme (?:Inc|Corp)\\b",
+      "message": "Placeholder content (\"{match}\").",
+      "fix": "Write real-looking content: a named product, believable numbers, real feature names.",
+      "examples": {
+        "bad": ["<p>Lorem ipsum dolor sit amet</p>", "<h3>Feature 1</h3>", "<cite>John Doe, CEO</cite>"],
+        "good": ["<h3>Overdue reminders</h3>"]
+      }
+    },
+    {
+      "id": "vague-button",
+      "severity": "warn",
+      "scope": "copy",
+      "regex": ">\\s*(?:Get started|Learn more|Click here|Read more|Discover more|Explore)\\s*<",
+      "message": "Button or link text that doesn't say what happens.",
+      "fix": "Name the outcome: \"Start 14-day trial\", \"See pricing\", \"Book a 20-minute call\".",
+      "examples": {
+        "bad": ["<button>Get started</button>", "<a href=\"/docs\">Learn more</a>"],
+        "good": ["<button>Start 14-day trial</button>", "<p>Get started in minutes, not weeks.</p>"]
+      }
+    },
+    {
+      "id": "emoji-heading",
+      "severity": "warn",
+      "scope": "copy",
+      "regex": "<h[1-6][^>]*>\\s*(?:\\p{Extended_Pictographic}|\\p{Regional_Indicator})",
+      "flags": "giu",
+      "message": "Heading starts with an emoji, a common stand-in for a real icon or idea.",
+      "fix": "Drop the emoji, or use one icon from the project's icon set with a consistent size and stroke.",
+      "examples": {
+        "bad": ["<h3>🚀 Fast deploys</h3>", "<h2 class=\"title\">✨ New</h2>"],
+        "good": ["<h3>Deploys in 40 seconds</h3>"]
+      }
+    },
+    {
+      "id": "made-up-stat",
+      "severity": "warn",
+      "scope": "copy",
+      "regex": "\\b\\d{1,3}(?:\\.\\d)?x\\s+(?:faster|more|better|cheaper|productivity)\\b|\\b99\\.9+%|\\b\\d{1,3}(?:,000|[kKmM])\\+\\s+(?:users|customers|teams|developers|companies|creators|businesses)\\b",
+      "message": "A round, unsourced stat (\"{match}\") that reads as made up.",
+      "fix": "Use a real figure with its source, or remove it. In drafts, mark sample numbers so nobody ships them as fact.",
+      "examples": {
+        "bad": ["<p>Ship 10x faster</p>", "<span>99.99% uptime</span>", "<p>50,000+ users</p>"],
+        "good": ["<p>Median deploy took 41 s in October (status page)</p>"]
+      }
+    },
+    {
+      "id": "tell-word",
+      "severity": "warn",
+      "scope": "copy",
+      "regex": "\\b(?:quiet|quietly|meticulously|thoughtfully)\\b",
+      "max": 1,
+      "message": "A word that has become a tell of generated copy (\"{match}\"), used more than once.",
+      "fix": "Replace it with the concrete fact it stands for: what is quiet, how was it made, for whom.",
+      "examples": {
+        "bad": ["<p>Quiet software.</p><p>Thoughtfully built.</p>"],
+        "good": ["<p>Quiet hours mute alerts from 22:00.</p>"]
+      }
+    },
+    {
+      "id": "dot-separators",
+      "severity": "warn",
+      "scope": "copy",
+      "regex": "\\s(?:·|&middot;|&#183;)\\s",
+      "max": 2,
+      "message": "Little dots between words used as decoration.",
+      "fix": "Use space, a line break or a list. Keep a separator only where items are a genuine inline list, such as a footer.",
+      "examples": {
+        "bad": ["<p>Fast · Private · Yours · Forever</p>"],
+        "good": ["<footer>© 2026 · Terms · Privacy</footer>"]
+      }
+    },
+    {
+      "id": "numbered-sections",
+      "severity": "warn",
+      "scope": "copy",
+      "regex": ">\\s*0[1-9]\\s*(?:<|/|—|–|\\.\\s*<)",
+      "max": 2,
+      "message": "Numbered section labels (01, 02, 03) as decoration.",
+      "fix": "Number things only when order matters, such as the steps of a setup. Otherwise let the headings carry the section.",
+      "examples": {
+        "bad": ["<span>01</span><span>02</span><span>03</span>"],
+        "good": ["<span>01</span><span>02</span>", "<td>2026-01-05</td>"]
+      }
+    }
+  ]
+}

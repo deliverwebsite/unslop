@@ -79,27 +79,37 @@ run it before it says "done": the playbook's checklist already does. To skip a l
 
 <!-- patterns:start -->
 
-| Check                             | Level   | Catches                                                                       |
-| --------------------------------- | ------- | ----------------------------------------------------------------------------- |
-| `banned-phrase`                   | error   | A phrase that signals generated copy.                                         |
-| `vague-social-proof`              | warning | Vague social proof reads as filler.                                           |
-| `placeholder-copy`                | error   | Placeholder content.                                                          |
-| `vague-button`                    | warning | Button or link text that doesn't say what happens.                            |
-| `emoji-heading`                   | warning | Heading starts with an emoji, a common stand-in for a real icon or idea.      |
-| `purple-blue-gradient`            | error   | Purple/indigo gradient, the most recognised default of generated interfaces.  |
-| `default-indigo-accent`           | warning | The framework's default indigo/violet accent is used throughout.              |
-| `gradient-text`                   | warning | Gradient text used more than once in this file.                               |
-| `neon-glow`                       | warning | Coloured glow shadow, a signature of generated dark-mode pages.               |
-| `glassmorphism`                   | warning | Frosted-glass blur on several surfaces in this file.                          |
-| `decorative-motion`               | warning | Decorative looping motion with no job.                                        |
-| `animate-layout`                  | warning | Transition on layout properties or `all`.                                     |
-| `css-motion-without-reduced`      | error   | Animation with no `prefers-reduced-motion` handling in this file.             |
-| `tailwind-motion-without-reduced` | warning | Tailwind animation with no reduced-motion variant in this file.               |
-| `default-font`                    | warning | Inter: the font nearly every generated interface uses by default.             |
-| `focus-removed`                   | error   | Focus outline removed with no visible replacement nearby.                     |
-| `img-without-alt`                 | error   | Image without alt text.                                                       |
-| `clickable-div`                   | warning | Click handler on a div or span, which keyboards and screen readers can't use. |
-| `dead-link`                       | warning | Link that goes nowhere (href="#").                                            |
+| Check                             | Level   | Catches                                                                                        |
+| --------------------------------- | ------- | ---------------------------------------------------------------------------------------------- |
+| `banned-phrase`                   | error   | A phrase that signals generated copy.                                                          |
+| `vague-social-proof`              | warning | Vague social proof reads as filler.                                                            |
+| `placeholder-copy`                | error   | Placeholder content.                                                                           |
+| `vague-button`                    | warning | Button or link text that doesn't say what happens.                                             |
+| `emoji-heading`                   | warning | Heading starts with an emoji, a common stand-in for a real icon or idea.                       |
+| `made-up-stat`                    | warning | A round, unsourced stat that reads as made up.                                                 |
+| `tell-word`                       | warning | A word that has become a tell of generated copy, used more than once.                          |
+| `dot-separators`                  | warning | Little dots between words used as decoration.                                                  |
+| `numbered-sections`               | warning | Numbered section labels (01, 02, 03) as decoration.                                            |
+| `tailwind-motion-without-reduced` | warning | Tailwind animation with no reduced-motion variant in this file.                                |
+| `img-without-alt`                 | error   | Image without alt text.                                                                        |
+| `clickable-div`                   | warning | Click handler on a div or span, which keyboards and screen readers can't use.                  |
+| `dead-link`                       | warning | Link that goes nowhere (href="#").                                                             |
+| `arrow-everywhere`                | warning | Arrows on many buttons and links in this file.                                                 |
+| `italic-headline-word`            | warning | One word set in italic inside a headline for flair.                                            |
+| `sparkle-icon`                    | warning | Sparkle icon, the stock symbol for "AI".                                                       |
+| `purple-blue-gradient`            | error   | Purple/indigo gradient, the most recognised default of generated interfaces.                   |
+| `default-indigo-accent`           | warning | The framework's default indigo/violet accent is used throughout.                               |
+| `gradient-text`                   | warning | Gradient text used more than once in this file.                                                |
+| `neon-glow`                       | warning | Coloured glow shadow, a signature of generated dark-mode pages.                                |
+| `glassmorphism`                   | warning | Frosted-glass blur on several surfaces in this file.                                           |
+| `decorative-motion`               | warning | Decorative looping motion with no job.                                                         |
+| `animate-layout`                  | warning | Transition on layout properties or `all`.                                                      |
+| `css-motion-without-reduced`      | error   | Animation with no `prefers-reduced-motion` handling in this file.                              |
+| `default-font`                    | warning | A font generated interfaces reach for by default (Inter for UI, Instrument Serif for display). |
+| `focus-removed`                   | error   | Focus outline removed with no visible replacement nearby.                                      |
+| `pulsing-dot`                     | warning | Pulsing green dot.                                                                             |
+| `coloured-left-border`            | warning | Coloured left border used as decoration on several blocks.                                     |
+| `hero-glow-blob`                  | warning | Large blurred shape, usually a coloured glow behind the hero.                                  |
 
 <!-- patterns:end -->
 
@@ -107,18 +117,19 @@ run it before it says "done": the playbook's checklist already does. To skip a l
 
 ## What the playbook covers
 
-1. **Start from the product.** The hero shows the product working; sections answer real buyer questions, not the stock page.
-2. **Copy a person would write.** A banned-phrase list, no two-beat slogans or vague social proof, buttons that say what happens.
-3. **Typography.** A typeface chosen on purpose, a fixed-ratio type scale, readable line lengths, tabular numbers.
-4. **Colour.** A neutral base plus one accent from the product, as tokens. No purple gradients, glows or glass everywhere.
-5. **Layout and spacing.** An 8 px scale, varied section rhythm, not everything a card, one radius scale.
+1. **Start from the product.** The hero shows the product working; the main feature and action dominate; no filler badges or eyebrows.
+2. **Copy a person would write.** Banned phrases and tell-words, no slogans or invented stats, no decorative dots or arrows.
+3. **Typography.** A typeface chosen on purpose, a fixed-ratio type scale, no flair italics, mono only where it means something.
+4. **Colour.** A neutral base plus one accent from the product, as tokens. No purple gradients, glows, cream-by-default or glass.
+5. **Layout and spacing.** An 8 px scale, varied rhythm, not everything a card, nested radii, optical alignment.
 6. **Motion with a job.** Every animation states what it explains; timings; reduced-motion support.
 7. **Components.** Reuse a good component library, keep components small and reusable, respect licences.
-8. **Imagery and icons.** Real UI with data that adds up, real photos, one icon set.
+8. **Imagery and icons.** Real UI with data that adds up, real photos, one icon set, no sparkles for "AI".
 9. **Interface states and forms.** Empty, loading, error and success states; forms that help.
-10. **Responsive and fast.** 360 px first, no layout shift, fonts and images that load fast.
-11. **Accessibility.** Semantic HTML, focus states, keyboard support, contrast.
-12. **A slop checklist** your agent runs before it says "done".
+10. **Laws of UX.** Progressive disclosure, defaults, recognition over recall, grouping, progress, peak-end, applied as rules.
+11. **Responsive and fast.** 360 px first, no layout shift, fonts and images that load fast.
+12. **Accessibility.** Semantic HTML, focus states, keyboard support, contrast.
+13. **A slop checklist** your agent runs before it says "done".
 
 Read the full playbook: [`rules/unslop.md`](rules/unslop.md).
 

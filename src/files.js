@@ -8,8 +8,19 @@ export const PACKAGE_ROOT = fileURLToPath(new URL("..", import.meta.url));
 
 export const readPackageFile = (path) => readFile(join(PACKAGE_ROOT, path), "utf8");
 
+// The lint checks live in patterns/, one file per scope. Returns [{ file, data }] in a stable order.
+export async function loadPatternFiles() {
+  const names = (await readdir(join(PACKAGE_ROOT, "patterns"))).filter((name) => name.endsWith(".json")).sort();
+  return Promise.all(
+    names.map(async (name) => ({
+      file: `patterns/${name}`,
+      data: JSON.parse(await readPackageFile(`patterns/${name}`)),
+    })),
+  );
+}
+
 export async function loadPatterns() {
-  return JSON.parse(await readPackageFile("patterns.json")).patterns;
+  return (await loadPatternFiles()).flatMap(({ data }) => data.patterns);
 }
 
 // Folders that hold dependencies, build output or tool state, never hand-written UI.

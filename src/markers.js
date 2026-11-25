@@ -35,7 +35,7 @@ export function renderLibraryTable(libraries) {
   return ["| Library | Best for | Code |", "|---|---|---|", ...rows].join("\n");
 }
 
-// The README table of lint checks, rendered from patterns.json.
+// The README table of lint checks, rendered from patterns/*.json.
 export function renderPatternTable(patterns) {
   const rows = patterns.map((pattern) => {
     const severity = pattern.severity === "error" ? "error" : "warning";
@@ -46,7 +46,7 @@ export function renderPatternTable(patterns) {
   return ["| Check | Level | Catches |", "|---|---|---|", ...rows].join("\n");
 }
 
-// The banned-phrase line in the playbook, rendered from the phrases in patterns.json.
+// The banned-phrase line in the playbook, rendered from the phrases in patterns/copy.json.
 export function renderBannedPhrases(patterns) {
   const phrases = patterns.find((pattern) => pattern.id === "banned-phrase").phrases;
   return `Banned phrases: ${phrases.map((phrase) => `"${phrase}"`).join(", ")}.`;

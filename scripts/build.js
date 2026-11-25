@@ -1,11 +1,12 @@
 // Writes every generated file from its single source:
-// - the banned-phrase list in rules/unslop.md from patterns.json
+// - the banned-phrase list in rules/unslop.md from patterns/copy.json
 // - each AI tool's rule file from rules/unslop.md (see src/targets.js)
-// - the library and lint-check tables in README.md from libraries.json and patterns.json
+// - the library and lint-check tables in README.md from libraries.json and patterns/*.json
 // `node scripts/build.js` writes them; `node scripts/build.js --check` fails if any is out of date (used in CI).
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 import { format, resolveConfig } from "prettier";
+import { loadPatterns } from "../src/files.js";
 import { REPO_NOTICE, SOURCE, TARGETS, render } from "../src/targets.js";
 import { renderBannedPhrases, renderLibraryTable, renderPatternTable, replaceBlock } from "../src/markers.js";
 
@@ -28,7 +29,7 @@ async function sync(path, raw) {
   return content;
 }
 
-const { patterns } = JSON.parse(await readFile("patterns.json", "utf8"));
+const patterns = await loadPatterns();
 const source = await readFile(SOURCE, "utf8");
 const rules = await sync(SOURCE, replaceBlock(source, "banned-phrases", renderBannedPhrases(patterns)));
 for (const target of TARGETS) await sync(target.path, render(target, REPO_NOTICE, rules));
