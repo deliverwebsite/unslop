@@ -1,0 +1,27 @@
+name: publish
+
+# Publishes to npm when a GitHub release is published. Uses npm trusted publishing (OIDC), so there is
+# no npm token to store or renew. The trusted publisher on npmjs.com must name this file: publish.yml.
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  # Lets the job get the short-lived OIDC token that npm trusts.
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          # Trusted publishing needs npm 11.5.1 or later, which ships with Node.js 24.
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - run: npm publish --access public
