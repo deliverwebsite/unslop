@@ -6,7 +6,7 @@ Thanks for helping agents build better interfaces.
 
 1. Edit **only** [`rules/unslop.md`](rules/unslop.md). The files for each tool (`AGENTS.md`, `CLAUDE.md`,
    `.cursor/rules/unslop.mdc`, `.github/copilot-instructions.md`, `skills/unslop/SKILL.md`) are generated from it.
-   The banned-phrase list inside it is generated from [`patterns.json`](patterns.json).
+   The banned-phrase list inside it is generated from [`patterns/copy.json`](patterns/copy.json).
 2. Run `npm run build` to regenerate them, then `npm run check`.
 3. In the pull request, explain the problem the rule fixes, ideally with a before/after from a real agent.
 
@@ -15,7 +15,7 @@ costs the agent context, so a new rule should replace a vaguer one where it can.
 
 ## Add a lint check
 
-Checks live in [`patterns.json`](patterns.json) (schema: [`schema/patterns.schema.json`](schema/patterns.schema.json)).
+Checks live in [`patterns/`](patterns), one file per scope (schema: [`schema/patterns.schema.json`](schema/patterns.schema.json)).
 Each one has:
 
 - `id`, `severity` (`error` for clear slop or broken accessibility, `warn` for things that need judgement) and

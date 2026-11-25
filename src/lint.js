@@ -1,4 +1,4 @@
-// The lint engine: turns the patterns in patterns.json into checks and runs them over one file's text.
+// The lint engine: turns the patterns in patterns/*.json into checks and runs them over one file's text.
 // It knows nothing about the file system or output format; see files.js and report.js for those.
 
 const MARKUP = ["html", "htm", "jsx", "tsx", "vue", "svelte", "astro"];

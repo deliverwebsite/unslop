@@ -1,9 +1,10 @@
-// Checks libraries.json and patterns.json against their schemas, then runs every lint pattern against its own
+// Checks libraries.json and patterns/*.json against their schemas, then runs every lint pattern against its own
 // examples: each "bad" example must be caught and each "good" example must pass.
 // `node scripts/validate.js` prints every problem and exits 1 if there are any.
 import { readFile } from "node:fs/promises";
 import { check } from "../src/schema.js";
 import { compile, lintText } from "../src/lint.js";
+import { loadPatternFiles } from "../src/files.js";
 
 const load = async (path) => JSON.parse(await readFile(path, "utf8"));
 const problems = [];
@@ -21,12 +22,21 @@ const libraries = await load("libraries.json");
 problems.push(...check(libraries, await load("schema/libraries.schema.json"), "libraries.json"));
 duplicates(libraries.libraries, "name");
 
-const { patterns = [], ...rest } = await load("patterns.json");
-problems.push(...check({ patterns, ...rest }, await load("schema/patterns.schema.json"), "patterns.json"));
+const patternSchema = await load("schema/patterns.schema.json");
+const patterns = [];
+for (const { file, data } of await loadPatternFiles()) {
+  problems.push(...check(data, patternSchema, file));
+  for (const pattern of data.patterns ?? []) {
+    if (pattern.scope !== file.slice("patterns/".length, -".json".length)) {
+      problems.push(`${file} (${pattern.id}): scope ${pattern.scope} belongs in patterns/${pattern.scope}.json`);
+    }
+    patterns.push(pattern);
+  }
+}
 duplicates(patterns, "id");
 
 for (const pattern of patterns) {
-  const where = `patterns.json (${pattern.id})`;
+  const where = `patterns/${pattern.scope}.json (${pattern.id})`;
   if (Boolean(pattern.phrases) === Boolean(pattern.regex)) {
     problems.push(`${where}: needs exactly one of phrases or regex`);
     continue;
@@ -52,4 +62,4 @@ if (problems.length > 0) {
   process.exit(1);
 }
 console.log(`libraries.json is valid (${libraries.libraries.length} libraries).`);
-console.log(`patterns.json is valid (${patterns.length} patterns, every example checked).`);
+console.log(`patterns/ is valid (${patterns.length} checks, every example checked).`);

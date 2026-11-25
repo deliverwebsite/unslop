@@ -1,0 +1,101 @@
+{
+  "$schema": "../schema/patterns.schema.json",
+  "description": "Lint checks for structure and accessibility in HTML-like files.",
+  "patterns": [
+    {
+      "id": "tailwind-motion-without-reduced",
+      "severity": "warn",
+      "scope": "markup",
+      "regex": "\\banimate-(?!none\\b)[a-z][a-z0-9-]*",
+      "unless": "motion-reduce:|motion-safe:|prefers-reduced-motion|useReducedMotion|reducedMotion",
+      "once": true,
+      "message": "Tailwind animation with no reduced-motion variant in this file.",
+      "fix": "Use `motion-safe:animate-…` or add `motion-reduce:animate-none`.",
+      "examples": {
+        "bad": ["<div class=\"animate-bounce\"></div>"],
+        "good": ["<div class=\"motion-safe:animate-bounce\"></div>"]
+      }
+    },
+    {
+      "id": "img-without-alt",
+      "severity": "error",
+      "scope": "markup",
+      "regex": "<img\\b(?![^>]*\\balt\\s*=)[^>]*>",
+      "message": "Image without alt text.",
+      "fix": "Add alt text that says what the image shows, or alt=\"\" if it is purely decorative.",
+      "examples": {
+        "bad": ["<img src=\"/hero.png\">", "<img\n  src=\"/a.png\"\n/>"],
+        "good": ["<img src=\"/hero.png\" alt=\"Invoice list with three overdue items\">"]
+      }
+    },
+    {
+      "id": "clickable-div",
+      "severity": "warn",
+      "scope": "markup",
+      "regex": "<(?:div|span)\\b[^>]*\\bon[Cc]lick\\s*=",
+      "message": "Click handler on a div or span, which keyboards and screen readers can't use.",
+      "fix": "Use a <button> for actions and an <a href> for navigation.",
+      "examples": {
+        "bad": ["<div onClick={open}>", "<span onclick=\"go()\">"],
+        "good": ["<button onClick={open}>"]
+      }
+    },
+    {
+      "id": "dead-link",
+      "severity": "warn",
+      "scope": "markup",
+      "regex": "\\bhref\\s*=\\s*[\"']#[\"']",
+      "message": "Link that goes nowhere (href=\"#\").",
+      "fix": "Link to a real destination, or use a <button> if it performs an action.",
+      "examples": {
+        "bad": ["<a href=\"#\">Pricing</a>"],
+        "good": ["<a href=\"#pricing\">Pricing</a>"]
+      }
+    },
+    {
+      "id": "arrow-everywhere",
+      "severity": "warn",
+      "scope": "markup",
+      "regex": "→|&rarr;|↗|<(?:ArrowRight|ArrowUpRight|ChevronRight)(?:Icon)?\\b",
+      "max": 2,
+      "message": "Arrows on many buttons and links in this file.",
+      "fix": "An arrow means \"this goes somewhere\". Keep it on the one primary link, if any, and let button text do the work.",
+      "examples": {
+        "bad": ["<a>Pricing →</a><a>Docs →</a><button>Start <ArrowRight /></button>"],
+        "good": ["<a>Read the changelog →</a>"]
+      }
+    },
+    {
+      "id": "italic-headline-word",
+      "severity": "warn",
+      "scope": "markup",
+      "regex": "<h[1-3]\\b[^>]*>(?:(?!</h[1-3]>)[\\s\\S]){0,200}?(?:<(?:em|i)\\b|<\\w+[^>]*\\bclass(?:Name)?=[\"'][^\"']*\\bitalic\\b)",
+      "message": "One word set in italic inside a headline for flair.",
+      "fix": "Set the headline in one style. Use emphasis only where the sentence would be read with stress.",
+      "examples": {
+        "bad": [
+          "<h1>Software that <em>listens</em></h1>",
+          "<h2 class=\"x\">Work <span class=\"font-serif italic\">better</span></h2>",
+          "<h1>Notes that feel <em className=\"font-serif\">calm</em></h1>"
+        ],
+        "good": [
+          "<h1>Software that listens</h1>",
+          "<h3>Plans</h3><p><em>Billed yearly</em></p>",
+          "<h1>Upload an <img src=\"/a.png\" alt=\"\" /> image</h1>"
+        ]
+      }
+    },
+    {
+      "id": "sparkle-icon",
+      "severity": "warn",
+      "scope": "markup",
+      "regex": "<Sparkles?(?:Icon)?\\b|\\blucide-sparkles?\\b|✨",
+      "message": "Sparkle icon, the stock symbol for \"AI\".",
+      "fix": "Show what the feature does instead: an icon for the action itself, or no icon.",
+      "examples": {
+        "bad": ["<Sparkles size={16} />", "<span>✨ AI summary</span>"],
+        "good": ["<FileText size={16} />"]
+      }
+    }
+  ]
+}
