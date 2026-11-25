@@ -17,7 +17,7 @@
     "bin",
     "src",
     "rules",
-    "patterns.json",
+    "patterns",
     "libraries.json",
     "schema",
     "LICENSE",

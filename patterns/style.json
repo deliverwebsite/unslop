@@ -1,91 +1,7 @@
 {
-  "$schema": "./schema/patterns.schema.json",
-  "description": "Machine-checkable tells of AI-generated interfaces. Used by `unslop lint` and rendered into the playbook. Every pattern carries examples that the checks run against it.",
+  "$schema": "../schema/patterns.schema.json",
+  "description": "Lint checks for visual tells in stylesheets and in styles inside markup (classes, <style> blocks, inline styles).",
   "patterns": [
-    {
-      "id": "banned-phrase",
-      "severity": "error",
-      "scope": "copy",
-      "phrases": [
-        "Unlock the power of",
-        "Supercharge",
-        "Seamless",
-        "Revolutionize",
-        "Revolutionise",
-        "Next-generation",
-        "Next-gen",
-        "Elevate your",
-        "In today's fast-paced world",
-        "Cutting-edge",
-        "Game-changer",
-        "Game-changing",
-        "Unleash",
-        "Empower",
-        "Effortless",
-        "Streamline your",
-        "World-class",
-        "Harness the",
-        "Take your business to the next level",
-        "Transform the way you",
-        "Built for the future",
-        "Like never before"
-      ],
-      "message": "\"{match}\" is a phrase that signals generated copy.",
-      "fix": "Say what the product does and for whom, with a concrete detail (a number, a feature name, a result).",
-      "examples": {
-        "bad": ["<h1>Supercharge your workflow</h1>", "<p>Seamlessly sync your files.</p>"],
-        "good": ["<h1>Invoices that chase themselves</h1>", "<SeamlessScroll />"]
-      }
-    },
-    {
-      "id": "vague-social-proof",
-      "severity": "warn",
-      "scope": "copy",
-      "regex": "\\b(?:trusted by|loved by|join) (?:thousands|millions|leading|teams|developers|the best)\\b",
-      "message": "Vague social proof (\"{match}\") reads as filler.",
-      "fix": "Use a specific, checkable claim: \"2,400 clinics send reminders with Pulsebook\", or a named quote.",
-      "examples": {
-        "bad": ["<p>Trusted by thousands of teams</p>", "Join millions of creators"],
-        "good": ["<p>Used by 2,400 dental clinics in Ontario</p>"]
-      }
-    },
-    {
-      "id": "placeholder-copy",
-      "severity": "error",
-      "scope": "copy",
-      "regex": "\\blorem ipsum\\b|\\bFeature [1-9]\\b|\\b(?:Your|Company|Product) (?:Name|Logo) Here\\b|\\bJohn Doe\\b|\\bAcme (?:Inc|Corp)\\b",
-      "message": "Placeholder content (\"{match}\").",
-      "fix": "Write real-looking content: a named product, believable numbers, real feature names.",
-      "examples": {
-        "bad": ["<p>Lorem ipsum dolor sit amet</p>", "<h3>Feature 1</h3>", "<cite>John Doe, CEO</cite>"],
-        "good": ["<h3>Overdue reminders</h3>"]
-      }
-    },
-    {
-      "id": "vague-button",
-      "severity": "warn",
-      "scope": "copy",
-      "regex": ">\\s*(?:Get started|Learn more|Click here|Read more|Discover more|Explore)\\s*<",
-      "message": "Button or link text that doesn't say what happens.",
-      "fix": "Name the outcome: \"Start 14-day trial\", \"See pricing\", \"Book a 20-minute call\".",
-      "examples": {
-        "bad": ["<button>Get started</button>", "<a href=\"/docs\">Learn more</a>"],
-        "good": ["<button>Start 14-day trial</button>", "<p>Get started in minutes, not weeks.</p>"]
-      }
-    },
-    {
-      "id": "emoji-heading",
-      "severity": "warn",
-      "scope": "copy",
-      "regex": "<h[1-6][^>]*>\\s*(?:\\p{Extended_Pictographic}|\\p{Regional_Indicator})",
-      "flags": "giu",
-      "message": "Heading starts with an emoji, a common stand-in for a real icon or idea.",
-      "fix": "Drop the emoji, or use one icon from the project's icon set with a consistent size and stroke.",
-      "examples": {
-        "bad": ["<h3>🚀 Fast deploys</h3>", "<h2 class=\"title\">✨ New</h2>"],
-        "good": ["<h3>Deploys in 40 seconds</h3>"]
-      }
-    },
     {
       "id": "purple-blue-gradient",
       "severity": "error",
@@ -194,28 +110,18 @@
       }
     },
     {
-      "id": "tailwind-motion-without-reduced",
-      "severity": "warn",
-      "scope": "markup",
-      "regex": "\\banimate-(?!none\\b)[a-z][a-z0-9-]*",
-      "unless": "motion-reduce:|motion-safe:|prefers-reduced-motion|useReducedMotion|reducedMotion",
-      "once": true,
-      "message": "Tailwind animation with no reduced-motion variant in this file.",
-      "fix": "Use `motion-safe:animate-…` or add `motion-reduce:animate-none`.",
-      "examples": {
-        "bad": ["<div class=\"animate-bounce\"></div>"],
-        "good": ["<div class=\"motion-safe:animate-bounce\"></div>"]
-      }
-    },
-    {
       "id": "default-font",
       "severity": "warn",
       "scope": "style",
-      "regex": "font-family\\s*:\\s*['\"]?Inter\\b|\\bfamily=Inter\\b|import\\s*\\{[^}]*\\bInter\\b[^}]*\\}\\s*from\\s*['\"]next/font/google['\"]",
-      "message": "Inter: the font nearly every generated interface uses by default.",
-      "fix": "Choose a typeface for a reason that fits the product, and set a type scale for it. Keep Inter only if you chose it on purpose.",
+      "regex": "font-family\\s*:\\s*['\"]?(?:Inter|Instrument Serif)\\b|\\bfamily=(?:Inter|Instrument\\+Serif)\\b|import\\s*\\{[^}]*\\b(?:Inter|Instrument_Serif)\\b[^}]*\\}\\s*from\\s*['\"]next/font/google['\"]",
+      "message": "A font generated interfaces reach for by default (Inter for UI, Instrument Serif for display).",
+      "fix": "Choose a typeface for a reason that fits the product, and set a type scale for it. Keep it only if you chose it on purpose.",
       "examples": {
-        "bad": ["font-family: Inter, sans-serif;", "import { Inter } from \"next/font/google\";"],
+        "bad": [
+          "font-family: Inter, sans-serif;",
+          "import { Inter } from \"next/font/google\";",
+          "font-family: 'Instrument Serif', serif;"
+        ],
         "good": ["font-family: \"Source Serif 4\", serif;", "font-family: Interstate, sans-serif;"]
       }
     },
@@ -240,39 +146,43 @@
       }
     },
     {
-      "id": "img-without-alt",
-      "severity": "error",
-      "scope": "markup",
-      "regex": "<img\\b(?![^>]*\\balt\\s*=)[^>]*>",
-      "message": "Image without alt text.",
-      "fix": "Add alt text that says what the image shows, or alt=\"\" if it is purely decorative.",
+      "id": "pulsing-dot",
+      "severity": "warn",
+      "scope": "style",
+      "regex": "\\banimate-(?:ping|pulse)\\b[^\"'`\\n]*\\bbg-(?:green|emerald|lime)-\\d{3}\\b|\\bbg-(?:green|emerald|lime)-\\d{3}\\b[^\"'`\\n]*\\banimate-(?:ping|pulse)\\b",
+      "message": "Pulsing green dot.",
+      "fix": "Show a live indicator only for something that is actually live, and update it from real state.",
       "examples": {
-        "bad": ["<img src=\"/hero.png\">", "<img\n  src=\"/a.png\"\n/>"],
-        "good": ["<img src=\"/hero.png\" alt=\"Invoice list with three overdue items\">"]
+        "bad": ["<span class=\"h-2 w-2 rounded-full bg-green-500 animate-ping\"></span>"],
+        "good": [
+          "<span class=\"h-2 w-2 rounded-full bg-green-500\"></span>",
+          "<div class=\"animate-pulse bg-stone-200\"></div>"
+        ]
       }
     },
     {
-      "id": "clickable-div",
+      "id": "coloured-left-border",
       "severity": "warn",
-      "scope": "markup",
-      "regex": "<(?:div|span)\\b[^>]*\\bon[Cc]lick\\s*=",
-      "message": "Click handler on a div or span, which keyboards and screen readers can't use.",
-      "fix": "Use a <button> for actions and an <a href> for navigation.",
+      "scope": "style",
+      "regex": "\\bborder-l-(?:2|4|8)\\b[^\"'`\\n]*\\bborder-(?!gray|zinc|neutral|stone|slate|black|white|transparent|current)[a-z]+-\\d{3}\\b|border-left\\s*:\\s*\\d+px\\s+solid\\s+(?!(?:black|gray|grey|transparent|currentColor)\\b)(?:#|rgb|hsl|[a-z]+\\s*;)",
+      "max": 1,
+      "message": "Coloured left border used as decoration on several blocks.",
+      "fix": "Separate blocks with space or a neutral rule. Keep a coloured edge for one meaningful state, such as an error callout.",
       "examples": {
-        "bad": ["<div onClick={open}>", "<span onclick=\"go()\">"],
-        "good": ["<button onClick={open}>"]
+        "bad": ["<div class=\"border-l-4 border-blue-500\"></div><div class=\"border-l-4 border-purple-500\"></div>"],
+        "good": ["<div class=\"border-l-4 border-red-600\"></div>", "border-left: 1px solid currentColor;"]
       }
     },
     {
-      "id": "dead-link",
+      "id": "hero-glow-blob",
       "severity": "warn",
-      "scope": "markup",
-      "regex": "\\bhref\\s*=\\s*[\"']#[\"']",
-      "message": "Link that goes nowhere (href=\"#\").",
-      "fix": "Link to a real destination, or use a <button> if it performs an action.",
+      "scope": "style",
+      "regex": "\\bblur-(?:2xl|3xl|\\[\\d{2,}px\\])\\b|filter\\s*:\\s*blur\\(\\s*\\d{2,}px",
+      "message": "Large blurred shape, usually a coloured glow behind the hero.",
+      "fix": "Remove it. If the hero needs depth, use the product screenshot and one surface colour.",
       "examples": {
-        "bad": ["<a href=\"#\">Pricing</a>"],
-        "good": ["<a href=\"#pricing\">Pricing</a>"]
+        "bad": ["<div class=\"absolute rounded-full bg-violet-500 blur-3xl\"></div>", "filter: blur(80px);"],
+        "good": ["<div class=\"blur-sm\"></div>", "filter: blur(2px);"]
       }
     }
   ]
